@@ -1,0 +1,349 @@
+FORMAT: 1A
+HOST: http://jams.imjustinbraun.com/
+
+# OTB Live API
+
+The OTB API is a RESTFul API that allows consumer clients to post and receive data from the various OTB services. 
+
+## HTTP Status Code Summary
+
+* 200 OK - Everything worked as expected.
+* 400 Bad Request - Often missing a required parameter.
+* 401 Unauthorized - No valid API key provided.
+* 402 Request Failed - Parameters were valid but request failed.
+* 404 Not Found - The requested item doesn't exist.
+* 500, 501, 502, 503, 504 Server errors - something went wrong on the API’s side
+
+## Exception Code Summary
+
+* Not Implemented -  2
+* Required Fields Missing - 3
+* Permission Denied -  4
+* Record does not exist - 5
+* User does not exist - 6
+* Invalid Session -  7
+
+## Users [/user]
+
+### Get a Facebook Login Token [GET /user/FacebookRedirectURL]
+
+Retrieves a JSON array that contains the URL that facebook needs to authenticate. Use this URL as the link to any login buttons.
+
++ Response 200 (application/json)
+
+        {
+            "message" : "https:\/\/www.facebook.com\/v2.3\/dialog\/oauth?client_id=1384275865230918&redirect_uri=http%3A%2F%2Fjams.imjustinbraun.com%2Fuser%2FFacebookLoginOrCreate&state=7a526714c49f600df877fe64f6ef150b&sdk=php-sdk-4.0.23&scope=email%2Cuser_friends%2Cuser_birthday%2Cuser_location"
+        }
+
+### Facebook Login or Create [GET /user/FacebookLoginOrCreate]
+
+Endpoint that facebook will access after the redirect URL has been accessed. Will retrieve a JSON array with the logged in user or user created.
+
++ Response 200 (application/json)
+
+        {
+            "Message":"Login Success",
+            "UserID":"15"
+        }
+        
++ Response 200 (application/json)
+
+        {
+            "Message":"User Created",
+            "UserID":"15"
+        }
+
+### Get logged in user's profile information [GET /user/me]
+
+Endpoint that gets a logged in users's profile information, or tells you that you need to log in.
+
++ Response 200 (application/json)
+
+        {
+            "id" : "15",
+            "firstName" : "Ricky",
+            "lastName" : "Grade 10",
+            "phone" : "312.498.1139",
+            "address1" : "123 Sesame Street",
+            "address2" : "",
+            "city" : "",
+            "state" : "",
+            "zip" : "60647",
+            "country" : "USA",
+            "timeZoneOffset" : "-5",
+            "gender" : "male",
+            "birthday" : "1986-01-14 00:00:00"
+            "avatarURL" : "http://graph.facebook.com/10102505698537010/picture?type=square",
+
+        }
+        
++ Response 200 (application/json)
+
+        {
+            "id" : "-1",
+            "message" : "Not logged in."
+        }
+        
+### Logout [GET /user/me/logout]
+
+Logs out the currently logged in user
+
++ Response 200 (application/json)
+
+        {
+            "id":"42",
+            "message":"logged out."
+        }
+        
+### Get my permissions [GET /user/me/permissions]
+
+Returns an array with permissions granted for the currently logged in user
+
++ Response 200 (application/json)
+
+        [
+            "Article_Draft",
+            "Article_Pending_Review"
+        ]
+
+### List a page of tracks that a user has liked [GET /user/profile/likes/tracks/]
+
++ Response 200 (application/json)
+
+        [
+            {
+                "title": "Watch this DJ pass out on stage",
+                "URL": "/site/articles/{DJ-passout}",
+                "published_at": "2015-08-05T08:40:51.620Z",
+                "categories": [
+                    {
+                        "category": "Bloopers"
+                    }, {
+                        "category": "Event"
+                    }
+                    
+                ],
+                "Author":"Imjustinbraun",
+                "Preview_text":"blah blah blah",
+                "ThumbnailImageURL":"/images/imjustinbraun.jpg"
+            }
+        ]
+
+## Ads [/ad]
+### Get an ad by its ID [GET /ad/{adID}]
+
++ adID ... Ad's unique ID
+
++ Response 200 (application/json)
+
+        {
+            "id":"4",
+            "owner":"15",
+            "name":"Aufakt",
+            "linkURL":"http:\/\/www.auftaktacoustics.com\/",
+            "imageURL":"http:\/\/imjustinbraun.com\/ads\/mediumrectangle\/auftakt.jpg",
+            "size":"MEDIUM_RECT",
+            "clickCount":"0",
+            "impressionCount":"12",
+            "created":"2015-09-30 02:41:44"
+        }
+
+### Get a randomly generated ad [GET /ad?AdSize={AdSize}]
+
+Retrieves a randomly generated ad.
+
++ Parameters
+    + AdSize ... (Optional) The Size of the ad you would like to retrieve. Default is Medium Rectangle.
+        + Values
+            + `RECTANGLE31` ... 300x100 Rectangle
+            + `LEADERBOARD` ... 728x90 Leaderboard
+            + `FULL_BANNER` ... 468x60 Full Banne
+            + `HALF_BANNER` ... 234x60 Half Banner
+            + `VERTICAL_BANNER` ... 120x240 Vertical Banner
+            + `MEDIUM_RECT` ... 300x250 Medium Rectangle
+            + `POP_UNDER` ... 720x300 Pop-Under
+            + `BUTTON_1` ... 120x90 Button 1
+            + `BUTTON_2` ... 120x60 Button 2
+            + `MICRO_BAR` ... 88x31 Micro Bar
+            + `HALF_PAGE` ... 300x600 Half-Page
+            + `WIDE_SKYSCRAPER` ... 160x600 Wide Skyscraper
+            + `SKYSCRAPER` ... 120x600 Skyscraper
+            + `SQUARE` ... 250x250 Square Pop Up
+            + `VERTICAL_RECTANGLE` ... 240x400 Vertical Rectangle
+            + `LARGE_RECTANGLE` ... 336x280 Large Rectangle
+            + `RECTANGLE` ... 180x150 Rectangle
+            + `SQUARE_BUTTON` ... 125x125 Square Button
+
++ Response 200 (application/json)
+
+        {
+            "id" : "1",
+            "owner" : "15",
+            "name" : "MiFremming",
+            "linkURL" : "http:\/\/miafremming.com",
+            "imageURL" : "http:\/\/imjustinbraun.com\/ads\/mediumrectangle\/miafremming.jpg",
+            "size" : "MEDIUM_RECT",
+            "clickCount" : "0",
+            "impressionCount" : "13",
+            "created" : "2015-09-29 18:58:17"
+        }
+
+### Increment a click count for an ad [PUT /ad/{adID}/ClickCount]
+
+Adds a click to the click counters for a given ad.
+
++ Parameters
+    + adID ... (Required) The ID of the ad you'd like to increment
+
++ Response 200 (application/json)
+ 
+
+##Articles [/article]
+
+### Get article metadata [GET /article?StartIndex={StartIndex}&ResultsCount={ResultsCount}&Category={Category}&UserSubscription={UserSubscription}]
+
+Retrieves a JSON array of article metadata. Default behavior is to display 10 Article metadata objects in order of most recently published to the main feed. If there is an active user-session, default behavior is to display 10 filtered articles based on that user's preferences.
+
++ Parameters
+    + StartIndex ... (Optional) Starting index of the results. If you requested articles 1-10 last time, ask for 11-20 next time, for example.
+    + ResultsCount ... (Optional) The number of results that the API is asked to retrieve. Will return 10 results if left empty.
+    + Category ... (Optional) Filter results by a category
+    + UserSubscription ... (Optional) Filter the results by a user's preferences
+
++ Response 200 (application/json)
+
+        {
+            "id" : "1",
+            "title": "Become an OTB Author",
+            "URL": "/site/article/{become-otb-author}",
+            "publishedAt": "2015-08-05T08:40:51.620Z",
+            "categories":
+            {
+                "Tech House",
+                "Event Review"
+            },
+            "author":"1",
+            "previewText":"blah blah blah",
+            "thumbnailImageURL":"/images/imjustinbraun.jpg"
+        }
+          
+### Create a New Article [POST]
+
+Post new article content.
+
++ title ... (required)
++ URL ... (required)
++ publishedAt ... (required)
++ status ... (required)
+    + Values
+        + `Draft`
+        + `Pending_Review`
+        + `Published`
++ previewText ... (required)
++ thumbnailImageURL ... (required)
++ content ... (required)
+
++ Response 201
+
+### Get an Article's content [GET /article/{ID}]
+
+Retrieves a JSON array containing article content. 
+
++ Parameters
+    + ID ... ID of the article
+
++ Response 200 (application/json)
+
+        [
+            {
+                "id" : "1",
+                "headRevision" : "8",
+                "title": "Become an OTB Author",
+                "URL": "/site/articles/{become-otb-author}",
+                "status" : "Published"
+                "publishedAt": "2015-08-05T08:40:51.620Z",
+                "categories":
+                    {
+                        "Tech House",
+                        "Event Review"
+                    },
+                "Author":"1",
+                "ThumbnailImageURL":"/images/imjustinbraun.jpg",
+                "ShareCount",1024
+                "Content":"blah blah blah",
+                "Comments": [
+                    {
+                        "id":"3",
+                        "Author":"1",
+                        "Content":"Such a good ricky!"
+                    },
+                    {
+                        "id":"4",
+                        "Author":"2",
+                        "Content":"blah blah blah"
+                    }
+                ]
+            }
+        ]
+
+### Edit an Existing Article [PUT /article/{ID}]
+
++ userID
++ title
++ URL
++ status
+    + Values
+        + `Draft`
+        + `Pending_Review`
+        + `Published`
++ thumbnailImageURL
++ content
+
++ Response 201
+
+## Videos [/site/videos]
+### Get video metadata [GET]
+
++ Response 200 (application/json)
+
+        [
+            {
+                "title": "Watch this DJ pass out on stage",
+                "URL": "/site/articles/{DJ-passout}",
+                "published_at": "2015-08-05T08:40:51.620Z",
+                "categories": [
+                    {
+                        "category": "Bloopers"
+                    }, {
+                        "category": "Event"
+                    }
+                    
+                ],
+                "Author":"Imjustinbraun",
+                "Preview_text":"blah blah blah",
+                "ThumbnailImageURL":"/images/imjustinbraun.jpg"
+            }
+        ]
+
+## Categories [/categories]
+
+### List a JSON array of categories [GET]
+
++ Response 200 (application/json)
+
+        [
+            "1" : "Techno",
+            "2" : "Tech House",
+            "3" : "Deep House",
+            "4" : "Nu Disco",
+            "5" : "Trance",
+            "6" : "Dubstep",
+            "7" : "Trap",
+            "8" : "Downtempo",
+            "9" : "House",
+            "10" : "Drum n Bass",
+            "11" : "Event Reviews",
+            "12" : "Event Announcements",
+            "13A" : "Editorials"
+        ]
+        
